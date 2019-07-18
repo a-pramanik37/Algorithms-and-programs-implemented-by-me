@@ -1,0 +1,44 @@
+string a;
+int z[cf], len;
+
+void zzz()
+{
+    mem(z, 0);
+    int right, left, i;
+    len = a.size();
+
+    right=left=0;
+    z[0]=len;
+    for(i=1; i<len; i++){
+        if(i>right){
+            right=left=i;
+
+            while(right<len && a[right]==a[right-left]){
+                right++;
+            }
+            z[i]=right-left;
+            right--;
+
+        }
+        else{
+
+            int xx = i-left;
+            if(z[xx]<(right-i+1)){
+                z[i]=z[xx];
+            }
+            else{
+
+                left=i;
+
+                while(right<len && a[right]==a[right-left]){
+                    right++;
+                }
+                z[i]=right-left;
+                right--;
+
+            }
+
+        }
+    }
+
+}

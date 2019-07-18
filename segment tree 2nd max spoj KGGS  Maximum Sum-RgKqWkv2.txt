@@ -1,0 +1,133 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+#define pb push_back
+#define ll long long int
+#define inf 2000000000
+#define pi (2.0*acos(0.0))
+#define vsort(v)   sort(v.begin(),v.end())
+#define ull unsigned long long int
+#define mem(a, b) memset(a, b, sizeof a)
+#define cf 100009
+int a[cf], m1, m2;
+
+struct data
+{
+    int val, in;
+    data(){
+    val = 0, in =0;
+    }
+}tr[3*cf];
+
+
+void build(int node, int s, int e)
+{
+    if(s==e){
+        tr[node].val=a[e];
+        tr[node].in=e;
+        return;
+    }
+
+    int mid = (s+e)/2;
+
+    build(node*2, s, mid);
+    build(node*2+1, mid+1, e);
+
+    if(tr[node*2].val>tr[node*2+1].val){
+        tr[node].val=tr[node*2].val;
+        tr[node].in=tr[node*2].in;
+    }
+    else{
+        tr[node].val=tr[node*2+1].val;
+        tr[node].in=tr[node*2+1].in;
+    }
+
+
+}
+
+void update(int node, int s, int e, int ind, int value)
+{
+    if(ind>e || s>ind)return;
+
+    if(s==ind && e==ind){
+        tr[node].val=value;
+        tr[node].in=ind;
+        return;
+    }
+
+    int mid = (s+e)/2;
+
+    update(node*2, s, mid, ind, value);
+    update(node*2+1, mid+1, e, ind, value);
+
+    if(tr[node*2].val>tr[node*2+1].val){
+        tr[node].val=tr[node*2].val;
+        tr[node].in=tr[node*2].in;
+    }
+    else{
+        tr[node].val=tr[node*2+1].val;
+        tr[node].in=tr[node*2+1].in;
+    }
+
+}
+
+int query(int node, int s, int e, int l, int r)
+{
+    if(l>e || s>r)return 0;
+
+    if(s>=l && e<= r){
+            /*printf("REC>> %d\n", node);*/
+        return node;
+    }
+
+    int mid = (s+e)/2;
+
+    int c = query(node*2, s, mid, l ,r);
+    int d = query((node*2)+1, mid+1, e, l ,r);
+    /*printf("REC>> %d %d\n", c, d);*/
+    if(tr[c].val>tr[d].val)return c;
+
+    else return d;
+
+}
+
+
+int main()
+
+{
+        int n, q, i, j, k, x, y,ind, val, m1, m2, ans1, ans2;
+        char ch;
+        while(scanf("%d", &n)==1){
+
+            for(i=1; i<=n; i++)scanf("%d", &a[i]);
+
+            build(1, 1, n);
+
+            scanf("%d", &q);
+
+            for(j=1; j<=q; j++){
+                cin>>ch;
+                if(ch=='U'){
+                    cin>>ind>>val;
+                    update(1, 1, n, ind, val);
+                }
+
+                else{
+                    cin>>x>>y;
+                    m1 = query(1, 1, n, x, y);
+                    //printf("%d\n", m1);
+                    ans1=tr[m1].val;
+                    m1 = tr[m1].in;
+                    //printf("%d\n", m1);
+                    update(1, 1, n, m1, -1);
+                    m2 = query(1, 1, n, x, y);
+                    ans2 = tr[m2].val;
+                    update(1, 1, n, m1, ans1);
+                    printf("%d\n", ans1+ans2);
+                }
+
+            }
+
+        }
+        return 0;
+}

@@ -1,0 +1,88 @@
+//-_-
+#include <bits/stdc++.h>
+using namespace std;
+
+#define pb push_back
+#define ll long long int
+#define inf 2000000000
+#define pi (2.0*acos(0.0))
+#define vsort(v)   sort(v.begin(),v.end())
+#define ull unsigned long long int
+#define mem(a, b) memset(a, b, sizeof a)
+#define cf 100009
+vector<int>a[100], cmp[100], b[100];
+
+int vis[100], mrk;
+stack<int>st;
+void f(int u)
+{
+    vis[u]++;
+    for(int i=0; i<a[u].size(); i++){
+        int y = a[u][i];
+        if(vis[y]==0){
+            f(y);
+        }
+    }
+    st.push(u);
+}
+
+void dfs(int u)
+{
+    vis[u]++;
+    cmp[mrk].pb(u);
+
+    for(int i=0; i<b[u].size(); i++){
+        int y = b[u][i];
+        if(vis[y]==0){
+            dfs(y);
+        }
+    }
+
+}
+
+int main()
+{
+    int n, i, j, k, x, y, m;
+
+    while(scanf("%d%d", &n, &m)==2){
+
+        for(i=1; i<=m; i++){
+            scanf("%d%d", &x, &y);
+            a[x].pb(y);
+            b[y].pb(x);
+        }
+
+        mem(vis, 0);
+
+        for(i=1; i<=n; i++){
+            if(vis[i]==0){
+                f(i);
+            }
+        }
+
+        mem(vis,0);
+        mrk=0;
+
+        while(!st.empty()){
+            x=st.top();
+            st.pop();
+            if(vis[x]==0){
+                ++mrk;
+                dfs(x);
+            }
+        }
+        cout<<mrk<<endl;
+        for(i=1; i<=mrk; i++){
+            for(j=0; j<cmp[i].size(); j++){
+                printf("%d ",cmp[i][j]);
+            }
+            printf("\n");
+        }
+
+        for(i=1; i<=n; i++){
+                a[i].clear();
+                b[i].clear();
+        }
+    }
+    return 0;
+}

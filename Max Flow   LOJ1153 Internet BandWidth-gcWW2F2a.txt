@@ -1,0 +1,99 @@
+///:-)
+#include <bits/stdc++.h>
+#define pb push_back
+#define ll long long int
+#define inf 2000000000
+#define sc(n) scanf("%d", &n)
+#define Aktaruzzaman using
+#define scl(n) scanf("%lld", &n)
+#define scd(n) scanf("%lf", &n)
+#define pi (2.0*acos(0.0))
+#define Pramanik namespace std;
+#define vsort(v)   sort(v.begin(),v.end())
+#define ull unsigned long long int
+#define mem(a, b) memset(a, b, sizeof a)
+#define cf 100009
+Aktaruzzaman Pramanik
+int vis[105], par[105];
+int w[105][105];
+vector<int>a[105];
+int n, src, sink;
+
+bool bfs()  // for checking is there is any connection between src and sink
+{
+    queue<int>q;
+    mem(vis, 0);
+    mem(par, -1);
+    q.push(src);
+    vis[src]=1;
+    bool flg = false;
+    while(!q.empty() && flg==false)
+    {
+        int x = q.front();
+        q.pop();
+
+        for(int i=0; i<a[x].size(); i++){
+            int y = a[x][i];
+            if(vis[y]==0 && w[x][y]>0){
+                    if(y==sink)flg=true;
+                    par[y]=x;
+                q.push(y);
+                vis[y]=1;
+
+            }
+        }
+
+    }
+    return flg;
+}
+
+int maxFlow()
+{
+    int tot=0;
+
+    while(1){
+        if(bfs()==false)break;
+
+        int cst = inf;
+
+        //finding minimum edge cost
+        for(int y = sink; y!=src; y = par[y]){
+            int x = par[y];
+
+            cst = min(cst, w[x][y]);
+//            printf("Cost = %d\n", cst);
+        }
+        //relaxing paths
+        for(int y = sink; y!=src; y = par[y]){
+            int x = par[y];
+            w[x][y]-=cst;
+            w[y][x]+=cst;
+        }
+
+        tot+=cst;
+    }
+    return tot;
+}
+
+int main()
+{
+    int t, i, j, k, x, y, c;
+    int cc = 0;
+    scanf("%d", &t);
+
+    while(t--){
+        scanf("%d", &n);
+        scanf("%d%d%d", &src, &sink, &c);
+        mem(w, 0);
+        while(c--){
+            scanf("%d%d%d", &x, &y, &k);
+            w[x][y]+=k;
+            w[y][x]+=k;
+            if(w[x][y]==k)a[x].pb(y); //same edge duibar connect na howar jonno
+            if(w[y][x]==k)a[y].pb(x); //same edge duibar connect na howar jonno
+        }
+
+        printf("Case %d: %d\n", ++cc, maxFlow());
+
+    }
+}

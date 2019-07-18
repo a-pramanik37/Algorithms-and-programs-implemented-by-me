@@ -1,0 +1,37 @@
+#include<bits/stdc++.h>
+using namespace std;
+int main()
+{
+    int n,m,i,j,k,l,p,q,x,y,z,src,des;
+    vector<int>a[100];
+    scanf("%d%d",&n,&m);
+    for(i=0;i<m;i++)
+    {
+        scanf("%d %d",&p,&q);
+        a[p].push_back(q);
+        a[q].push_back(p);
+    }
+    scanf("%d%d",&src,&des);
+    int vis[1000];
+    memset(vis,-1,sizeof vis);
+    queue<int>t;
+    t.push(src);
+    vis[src]=0;
+    while(t.size()>0)
+    {
+        x=t.front();
+        t.pop();
+        for(j=0;j<a[x].size();j++)
+        {
+            y=a[x][j];
+            if(vis[y]==-1)
+            {
+                vis[y]=vis[x]+1;
+                t.push(y);
+            }
+        }
+    }
+    printf("%d\n",vis[des]);
+ 
+    return 0;
+}

@@ -1,0 +1,87 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+vector <int> merge(vector <int>left, vector <int>right)
+{
+    int leftSz = left.size();
+    int rightSz = right.size();
+    vector <int> sortedArr(leftSz+rightSz);
+    int l = 0, r = 0, index = 0;
+    while(l < leftSz && r < rightSz)
+    {
+        if(left[l] <= right[r])
+        {
+            sortedArr[index] = left[l];
+            l++;
+        }
+        else
+        {
+            sortedArr[index] = right[r];
+            r++;
+        }
+        index++;
+    }
+
+
+    while(l<leftSz)
+    {
+        sortedArr[index]=left[l];
+        l++;
+        index++;
+    }
+    while(r<rightSz)
+    {
+        sortedArr[index]=right[r];
+        r++;
+        index++;
+    }
+    return sortedArr;
+}
+
+void printVector(vector <int> numbers)
+{
+    int size=numbers.size();
+    for(int i=0; i<size; i++) cout<<numbers[i]<<" ";
+    cout<<endl;
+}
+
+
+vector <int> mergeSOrt(vector <int> numbers)
+{
+    int l=0, h=numbers.size()-1;
+    if(l!=h)
+    {
+        int m=h/2;
+        vector <int>left, right;
+        for(int i=0; i<=m; i++) left.push_back(numbers[i]);
+        for(int i=m+1; i<=h; i++) right.push_back(numbers[i]);
+        left=mergeSOrt(left);
+        right=mergeSOrt(right);
+        numbers=merge(left, right);
+    }
+    return numbers;
+}
+
+int main()
+{
+    vector <int>numbers;
+    numbers.clear();
+
+    int sz = 500000;
+    for(int i=1; i<=sz; i++)
+    {
+        int n = rand();
+        numbers.push_back(n);
+    }
+    std::clock_t start;
+    double duration;
+
+    start = std::clock();
+
+    numbers=mergeSOrt(numbers);
+    duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
+
+    cout<<duration*1000.0<<endl;
+
+    return 0;
+}

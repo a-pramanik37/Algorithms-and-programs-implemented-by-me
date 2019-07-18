@@ -1,0 +1,97 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int a[1000];
+string b;
+
+int tr[3*1003];
+
+void build(int node, int l, int r){
+
+        if(l==r){
+            tr[node]=a[l];
+            return;
+        }
+
+        int mid = (l+r)/2;
+
+        build(node*2, l, mid);
+        build((node*2)+1, mid+1, r);
+
+        tr[node] = min(tr[node*2], tr[(node*2)+1]);
+
+}
+
+int query(int node, int s, int e, int l, int r){
+
+        if(s>=l && e<=r){
+            return tr[node];
+        }
+
+        int mid = (s+e)/2;
+        if(l>mid){
+            return query((node*2)+1, mid+1, e, l, r);
+        }
+
+        else if(r<=mid){
+            return query(node*2, s, mid, l, r);
+        }
+
+        else{
+            return min(query(node*2, s, mid, l, mid), query((node*2)+1, mid+1, e, mid+1, r));
+        }
+
+}
+
+void update(int node, int s, int e, int ind, int val){
+
+        if(s==e){
+            a[ind] = val;//not necessary
+            tr[node]=val;
+            return;
+        }
+
+        int mid = (s+e)/2;
+
+        if(ind<=mid){
+            update(node*2, s, mid, ind, val);
+        }
+
+        else{
+            update((node*2)+1, mid+1, e, ind, val);
+        }
+
+        tr[node] = min(tr[node*2], tr[(node*2)+1]);
+
+
+}
+
+
+int main()
+
+{
+        int n, q, i, in, va, left, right;
+        scanf("%d%d", &n, &q);
+
+
+        for(i=1; i<=n; i++){
+            scanf("%d", &a[i]);
+        }
+
+         build(1, 1, n);
+
+        for(i=1; i<=q; i++){
+            cin>>b;
+            if(b=="up"){
+                scanf("%d%d", &in, &va);
+                update(1, 1, n, in, va);
+            }
+            else{
+                scanf("%d%d", &left, &right);
+                int ans = query(1, 1, n, left, right);
+                printf("Minimum element: %d\n", ans);
+            }
+        }
+
+        return 0;
+}

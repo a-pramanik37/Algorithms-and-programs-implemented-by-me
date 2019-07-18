@@ -1,0 +1,2 @@
+If a horse can move 8 cells around him in a rectangular maze, tokhon oi maze er jekono dui cell er moddhokar minimum distance 
+				= max(vertical distance(x, y), horizontal distance(x, y))

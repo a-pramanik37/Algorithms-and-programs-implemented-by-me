@@ -1,0 +1,103 @@
+//-_-
+#include <bits/stdc++.h>
+using namespace std;
+
+#define pb push_back
+#define ll long long int
+#define inf 100000000000001
+#define pi (2.0*acos(0.0))
+#define vsort(v)   sort(v.begin(),v.end())
+#define ull unsigned long long int
+#define mem(a, b) memset(a, b, sizeof a)
+#define cf 100009
+
+struct node
+{
+    ll nd, cst;
+
+    node(ll x, ll y)
+    {
+        nd = x;
+        cst = y;
+    }
+
+
+};
+
+bool operator < (node a, node b)
+{
+    return a.cst>b.cst;
+}
+
+
+vector<ll>a[cf], cost[cf];
+priority_queue<node>q;
+ll dis[cf], par[cf];
+
+int main()
+{
+    ll n, m, i, j, k, x, y, c;
+
+    while(scanf("%lld%lld", &n, &m)==2){
+
+        for(i=1; i<=m; i++)
+        {
+            scanf("%lld%lld%lld", &x, &y, &c);
+            a[x].pb(y);
+            a[y].pb(x);
+            cost[x].pb(c);
+            cost[y].pb(c);
+        }
+
+        for(i=0; i<=n; i++){
+            dis[i]=inf;
+            par[i]=-1;
+        }
+
+        q.push(node(1, 0));
+        dis[1]=0;
+
+        while(!q.empty())
+        {
+            node top = q.top();
+            q.pop();
+            x = top.nd;
+            for(i=0; i<a[x].size(); i++)
+            {
+                y = a[x][i];
+                c = cost[x][i];
+
+                if(dis[y]>dis[x]+c)
+                {
+                    par[y]=x;
+                    dis[y]=dis[x]+c;
+                    q.push(node(y, dis[y]));
+                }
+            }
+        }
+
+        if(dis[n]==inf)printf("-1\n");
+        else{
+                vector<ll>ans;
+                //printf("bal\n");
+                i = n;
+                while(1){
+                        ans.pb(i);
+                    if(par[i]==-1)break;
+                    i = par[i];
+                }
+                for(i=ans.size()-1; i>=0; i--)printf("%lld ", ans[i]);
+                printf("\n");
+                ans.clear();
+        }
+
+
+        for(i=1; i<=n; i++){
+            a[i].clear();
+            cost[i].clear();
+        }
+
+
+    }
+    return 0;
+}

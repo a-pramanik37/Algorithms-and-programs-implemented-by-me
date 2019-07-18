@@ -1,0 +1,89 @@
+///:-)
+#include <bits/stdc++.h>
+#define pb push_back
+#define ll long long int
+#define inf 2000000000
+#define infLL 9000000000000000000
+#define infULL 18446744073709551615
+#define Aktaruzzaman using
+#define pi (2.0*acos(0.0))
+#define Pramanik namespace std;
+#define vsort(v)   sort(v.begin(),v.end())
+#define ull unsigned long long int
+#define mem(a, b) memset(a, b, sizeof a)
+#define cf 100009
+#define MOD 1000000007
+#define pii pair<int, int>
+
+//int dx[]={0,1,0,-1};
+//int dy[]={1,0,-1,0};
+//int dx[]={1,1,0,-1,-1,-1,0,1};
+//int dy[]={0,1,1,1,0,-1,-1,-1};
+
+template <class T> inline T gcd(T a,T b){if(b==0)return a;return gcd(b,a%b);}
+template< class T > inline T lcm(T a,T b) {a=abs(a);b=abs(b); return (a/gcd(a,b))*b;}
+template <class T> inline T is_prime(T a){if(a<2|a==4)return false;if(a==2||a==3||a==5)return true; T g=(T)sqrt(a)+1; for(T i=2; i<=g; i++){if(a%i==0)return false;}return false;}
+template <class T> inline T bigmod(T n,T p,T m){if(p==0)return 1; if(p%2)return ((n%m)*bigmod(n,p-1,m))%m; else {T c=bigmod(n,p/2,m);return ((c%m)*(c%m))%m;}}
+
+Aktaruzzaman Pramanik
+
+ll vis[19][19][2];
+ll temp[20], num[20];
+
+ll dp(ll st, ll cur, bool state, bool flg)
+{
+    if(cur<0)return state;
+    if(flg==0&&vis[st][cur][state]!=-1)return vis[st][cur][state];
+
+    ll hi;
+
+    if(flg==1)hi=num[cur];
+    else hi = 9;
+
+    ll xx = 0;
+    for(ll i=0; i<=hi; i++){
+        temp[cur]=i;
+        if(st==cur && i==0) xx+=dp(st-1, cur-1, state, flg&& i==hi);
+        else if(state && cur<(st+1)/2) xx+=dp(st, cur-1, temp[st-cur]==i, flg&& i==hi);
+        else xx+=dp(st, cur-1, state, flg && i==hi);
+    }
+
+    if(flg==0)vis[st][cur][state]=xx;
+    return xx;
+}
+
+ll makeAndGo(ll x)
+{
+    ll len=0;
+
+    while(x){
+        num[len++]=x%10;
+        x/=10;
+    }
+//    cout<<"num >> ";
+//    for(int i=0; i<len; i++)cout<<num[i];
+//    cout<<endl;
+    num[len]=0;
+    return dp(len-1, len-1, 1, 1);
+
+}
+
+int main()
+
+{
+    ios_base:: sync_with_stdio(0);cin.tie(NULL);cout.tie(NULL);
+    ll t, i, j, k, x, y, l, r;
+
+    cin>>t;
+    int cc=0;
+    while(t--){
+        cin>>l>>r;
+        if(l>r)swap(l, r);
+        mem(vis, -1);
+        x = makeAndGo(l-1);
+        y = makeAndGo(r);
+        cout<<"Case "<<++cc<<": ";
+        cout<<y-x<<endl;
+    }
+
+}

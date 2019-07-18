@@ -1,0 +1,670 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+struct data1
+{
+    string teamName;
+    int gamesPlayed, won, drawn, lost, goalsFor, goalsAgainst, goalDiff, points;
+    data1()
+    {
+        teamName="";
+        gamesPlayed=0;
+        won=0;
+        drawn=0;
+        lost=0;
+        goalsFor=0;
+        goalsAgainst=0;
+        goalDiff=0;
+        points=0;
+    }
+};
+
+bool cmp1(data1 lhs, data1 rhs){
+    if(lhs.points>rhs.points)return true;
+    else if(lhs.points==rhs.points && lhs.goalDiff>rhs.goalDiff)return true;
+    return false;
+}
+
+
+struct data2
+{
+    string teamName;
+    int demeritPoints, redCards, yellowCards;
+
+    data2(){
+        teamName="";
+        redCards=0;
+        yellowCards=0;
+        demeritPoints=0;
+    }
+
+};
+bool cmp2(data2 lhs, data2 rhs){
+    if(lhs.demeritPoints<rhs.demeritPoints)return true;
+    return false;
+}
+
+struct data3
+{
+    string teamName, goalScorer;
+    int goals;
+    data3()
+    {
+        teamName="";
+        goalScorer="";
+        goals=0;
+    }
+};
+
+bool cmp3(data3 lhs, data3 rhs){
+    if(lhs.goals>rhs.goals)return true;
+    if(lhs.goals==rhs.goals && lhs.goalScorer<rhs.goalScorer)return true;
+    return false;
+}
+
+
+class player
+{
+private:
+    string name;
+public:
+    void setName(string s){
+        name=s;
+    }
+    string getName(){
+        return name;
+    }
+};
+
+class team
+{
+private:
+    player arrP[12];
+    string teamName;
+    int gamesPlayed, gamesWon, gamesLost, drawn;
+    int redCards, yellowCards;
+    int goalsFor, goalsAgainst, goalsDiff;
+    int points, demeritPoints;
+
+public:
+    team()
+    {
+        gamesPlayed=0;gamesWon=0;gamesLost=0;drawn=0;
+        redCards=0;yellowCards=0;  goalsFor=0; goalsAgainst=0; goalsDiff=0;
+        points=0; demeritPoints=0;
+    }
+
+
+
+    void setTeamName(string s){
+        teamName=s;
+    }
+
+    void setPlayers(string p1, string p2, string p3, string p4, string p5, string p6, string p7, string p8, string p9, string p10, string p11){
+        arrP[1].setName(p1);
+        arrP[2].setName(p2);
+        arrP[3].setName(p3);
+        arrP[4].setName(p4);
+        arrP[5].setName(p5);
+        arrP[6].setName(p6);
+        arrP[7].setName(p7);
+        arrP[8].setName(p8);
+        arrP[9].setName(p9);
+        arrP[10].setName(p10);
+        arrP[11].setName(p11);
+    }
+
+    void displayPlayers()
+    {
+        for(int i=1; i<=11; i++){
+                cout<<i<<". "<<arrP[i].getName()<<"\t";
+                if(i%3==0)cout<<endl;
+        }
+    }
+
+    string getTeamName(){
+        return teamName;
+    }
+    int getGamesPlayed(){
+        return gamesPlayed;
+    }
+    int getGamesWon(){
+        return gamesWon;
+    }
+    int getGamesLost(){
+        return gamesLost;
+    }
+    int getGamesDrawn(){
+        return drawn;
+    }
+    int getRedCards(){
+        return redCards;
+    }
+    int getYellowCards(){
+        return yellowCards;
+    }
+    int getGoalsFor(){
+        return goalsFor;
+    }
+    int getGoalsAgainst(){
+        return goalsAgainst;
+    }
+    int getGoalDiff(){
+        return goalsFor-goalsAgainst;
+    }
+    int getPoints(){
+        return gamesWon*3+drawn;
+    }
+    int getDemeritPoints(){
+        return redCards*20+yellowCards*10;
+    }
+
+
+
+    /////////////
+
+    void incGamesPlayed(){
+        ++gamesPlayed;
+    }
+    void incGamesWon(){
+        ++gamesWon;
+    }
+    void incGamesLost(){
+        ++gamesLost;
+    }
+    void incGamesDrawn(){
+        ++drawn;
+    }
+    void incRedCards(int noOfR){
+        redCards+=noOfR;
+    }
+    void incYellowCards(int noOfY){
+        yellowCards+=noOfY;
+    }
+    void incGoalsFor(int noOfG){
+        goalsFor+=noOfG;
+    }
+    void incGoalsAgainst(int noOfG){
+        goalsAgainst+=noOfG;
+    }
+
+    /////////////
+
+};
+
+class allTeams
+{
+protected:
+    team arrT[6];
+
+
+public:
+
+    void setAllTeams()
+    {
+        arrT[1].setTeamName("CSE");
+        arrT[1].setPlayers("Al-Amin","Ramim","Shuvo","Rifat","Shafat","Shamim","Shayan","Ratan","Zim","Masum","Mehedi");
+        arrT[2].setTeamName("PHYSICS");
+        arrT[2].setPlayers("Asif","Nafi","Rokon","Mesbah","Shihab","Nayan","Aziz","Rana","Selim","Mannan","Hashem");
+        arrT[3].setTeamName("CHEMISTRY");
+        arrT[3].setPlayers("Parvez","Rumon","Nizhum","Manik","Kompon","Hadi","Siraz","Altaf","Hossain","Shimul","Mangal");
+        arrT[4].setTeamName("MATHEMATICS");
+        arrT[4].setPlayers("Rajib","Mamun","Shayekh","Tomal","Riaj","Aadit","Uttam","Pulok","Sayon","Saikat","Ekram");
+        arrT[5].setTeamName("STATISTICS");
+        arrT[5].setPlayers("Arif","Piyash","Sohag","Kamal","Sadat","Enamul","Samad","Azam","Nasir","Dalim","Mominul");
+    }
+
+    virtual void displayPointsTable()=0;
+    virtual void displayFixture()=0;
+    virtual void displayFairPlayTable()=0;
+
+
+    string getTeamName(int id){
+        return arrT[id].getTeamName();
+    }
+    int getGamesPlayed(int id){
+        return arrT[id].getGamesPlayed();
+    }
+    int getGamesWon(int id){
+        return arrT[id].getGamesWon();
+    }
+    int getGamesLost(int id){
+        return arrT[id].getGamesLost();
+    }
+    int getGamesDrawn(int id){
+        return arrT[id].getGamesDrawn();
+    }
+    int getGoalsFor(int id){
+        return arrT[id].getGoalsFor();
+    }
+    int getGoalsAgainst(int id){
+        return arrT[id].getGoalsAgainst();
+    }
+    int getGoalDiff(int id){
+        return arrT[id].getGoalDiff();
+    }
+    int getPoints(int id){
+        return arrT[id].getPoints();
+    }
+    int getDemeritPoints(int id){
+        return arrT[id].getDemeritPoints();
+    }
+    int getRedCards(int id){
+        return arrT[id].getRedCards();
+    }
+    int getYellowCards(int id){
+        return arrT[id].getYellowCards();
+    }
+
+
+    ///INCREMENT PART
+
+
+    void incGamesPlayed(int id){
+        arrT[id].incGamesPlayed();
+    }
+    void incGamesWon(int id){
+        arrT[id].incGamesWon();
+    }
+    void incGamesLost(int id){
+        arrT[id].incGamesLost();
+    }
+    void incGamesDrawn(int id){
+        arrT[id].incGamesDrawn();
+    }
+    void incGoalsFor(int id, int g){
+        arrT[id].incGoalsFor(g);
+    }
+    void incGoalsAgainst(int id, int g){
+        arrT[id].incGoalsAgainst(g);
+    }
+
+    void incRedCards(int id, int c){
+        arrT[id].incRedCards(c);
+    }
+    void incYellowCards(int id, int c){
+        arrT[id].incYellowCards(c);
+    }
+
+
+
+    void displayPlayers(int id){
+
+            arrT[id].displayPlayers();
+            cout<<endl;
+    }
+
+
+};
+
+class tournament : public allTeams
+{
+private:
+
+    data1 pointsTable[6];
+    data2 fairTable[6];
+    data3 topScorersTable[60];
+    map<string, int>mp;
+    string f1[12], f2[12];
+    map<int, string>res;
+    int total_match, topScorers;
+
+
+public:
+
+    tournament()
+    {
+        total_match=0;
+        topScorers=0;
+        mp["CSE"]=1; mp["PHYSICS"]=2;mp["CHEMISTRY"]=3;
+        mp["MATHEMATICS"]=4; mp["STATISTICS"]=5;
+
+        f1[1]="CSE"; f2[1]="MATHEMATICS";
+        f1[2]="PHYSICS"; f2[2]="STATISTICS";
+        f1[3]="CHEMISTRY"; f2[3]="CSE";
+        f1[4]="MATHEMATICS"; f2[4]="PHYSICS";
+        f1[5]="STATISTICS"; f2[5]="CHEMISTRY";
+        f1[6]="CSE"; f2[6]="STATISTICS";
+        f1[7]="CHEMISTRY"; f2[7]="PHYSICS";
+        f1[8]="STATISTICS"; f2[8]="MATHEMATICS";
+        f1[9]="PHYSICS"; f2[9]="CSE";
+        f1[10]="MATHEMATICS"; f2[10]="CHEMISTRY";
+
+        res.clear();
+    }
+
+
+
+    void setAllteams()
+    {
+        allTeams :: setAllTeams();
+    }
+
+
+    void updateAfterTakingInput(int g1, int g2, int r1, int y1, int r2, int y2, string t1, string t2){
+
+        int id1=mp[t1];
+        int id2=mp[t2];
+        ///part--1
+         allTeams::incGamesPlayed(id1);
+         if(g1>g2)allTeams::incGamesWon(id1);
+         else if(g1<g2)allTeams::incGamesLost(id1);
+         else allTeams:: incGamesDrawn(id1);
+         allTeams::incGoalsFor(id1, g1);
+         allTeams::incGoalsAgainst(id1, g2);
+         allTeams::incRedCards(id1, r1);
+         allTeams::incYellowCards(id1, y1);
+
+         ///part--2
+         allTeams::incGamesPlayed(id2);
+         if(g1<g2)allTeams::incGamesWon(id2);
+         else if(g1>g2)allTeams::incGamesLost(id2);
+         else allTeams:: incGamesDrawn(id2);
+         allTeams::incGoalsFor(id2, g2);
+         allTeams::incGoalsAgainst(id2, g1);
+         allTeams::incRedCards(id2, r2);
+         allTeams::incYellowCards(id2, y2);
+
+    }
+
+    void updateTopScorersTable(string p, string t, int gls){
+
+        for(int i=1; i<=topScorers; i++){
+            if(topScorersTable[i].goalScorer==p){
+                topScorersTable[i].goals+=gls;
+                return;
+            }
+        }
+
+            topScorersTable[++topScorers].goalScorer=p;
+            topScorersTable[topScorers].teamName=t;
+            topScorersTable[topScorers].goals+=gls;
+
+    }
+
+    void takeInput()
+    {   int g1=0, g2=0, r1, y1, r2, y2, gg, p, k;
+        total_match++;
+        if(total_match>10){
+            cout<<"All the matches had been played.."<<endl<<endl;
+            displayTournamentResult();
+            return;
+        }
+        cout<<endl<<setw(15)<<"MATCH -"<<total_match<<" :"<<endl;
+        cout<<setw(10)<<f1[total_match]<<" vs "<<f2[total_match]<<endl<<endl;
+        cout<<"Enter goals scored by "<<f1[total_match]<<" : ";
+        cin>>g1;
+
+
+        string s;
+        if(g1>0){
+        cout<<endl<<"Players of "<<f1[total_match]<<" team ::"<<endl<<endl;
+        allTeams::displayPlayers(mp[f1[total_match]]);
+        cout<<endl<<"Now  enter name of goal scorers and number of goals"<<endl;
+        cout<<"scored by corresponding player::"<<endl<<endl;
+        }
+        gg=0;
+        k=0;
+        p=0;
+        while(gg<g1){
+
+            cout<<"Enter name of scorer #"<<++k<<" :"<<endl;
+            cin>>s;
+            cout<<"Enter number of goals scoerd by "<<s<<" :"<<endl;
+            cin>>p;
+            updateTopScorersTable(s, f1[total_match], p);
+            gg+=p;
+        }
+
+        cout<<endl<<"Enter number of yellow cards : ";
+        cin>>y1;
+        cout<<"Enter number of red cards : ";
+        cin>>r1;
+        cout<<endl<<"Enter goals scored by "<<f2[total_match]<<" : ";
+        cin>>g2;
+
+
+
+        if(g2>0){
+        cout<<endl<<"Players of "<<f2[total_match]<<" team ::"<<endl<<endl;
+        allTeams::displayPlayers(mp[f2[total_match]]);
+        cout<<endl<<"Now  enter name of goal scorers and number of goals"<<endl;
+        cout<<"scored by corresponding player::"<<endl<<endl;
+        }
+        gg=0;
+        k=0;
+        p=0;
+        while(gg<g2){
+            cout<<"Enter name of scorer #"<<++k<<" :"<<endl;
+            cin>>s;
+            cout<<"Enter number of goals scoerd by "<<s<<" :"<<endl;
+            cin>>p;
+            updateTopScorersTable(s, f2[total_match], p);
+            gg+=p;
+        }
+
+        cout<<endl<<"Enter number of yellow cards : ";
+        cin>>y2;
+        cout<<"Enter number of red cards : ";
+        cin>>r2;
+        if(g1>g2)res[total_match]=f1[total_match];
+        else if(g2>g1)res[total_match]=f2[total_match];
+        else res[total_match]="D";
+        updateAfterTakingInput(g1, g2, r1, y1, r2, y2, f1[total_match], f2[total_match]);
+    }
+
+
+    ///WORKING HERE
+
+    void displayTopScorersTable(){
+        sort(topScorersTable+1, topScorersTable+topScorers+1, cmp3);
+
+        cout<<setw(55)<<"##############...TOP-SCORERS TABLE...#############"<<endl;
+        cout<<setw(55)<<"#------------------------------------------------#"<<endl;
+        cout<<setw(55)<<"#   Inter Department Football Tournament of JU   #"<<endl;
+        cout<<setw(55)<<"#________________________________________________#"<<endl;
+        cout<<setw(55)<<"###_####_####_####_###_####_####_####_####__####_#"<<endl<<endl;
+        cout<<"----------------------------------------------------------------"<<endl;
+        cout<<"#"<<setw(15)<<" PLAYER-NAME"<<setw(15)<<"   TEAM-NAME "<<setw(12)<<"  NUMBER OF GOALS "<<endl<<endl;
+        int k=10;
+        for(int i=1; i<=topScorers; i++){
+                if(i>9)k=9;
+            cout<<i<<". "<<setw(k)<<topScorersTable[i].goalScorer<<setw(16)<<topScorersTable[i].teamName<<setw(12)
+            <<topScorersTable[i].goals<<endl;
+        }
+        cout<<"________________________________________________________________"<<endl;
+
+    }
+
+    void refreshTables()
+    {
+        for(int i=1; i<=5; i++){
+            pointsTable[i].teamName=allTeams:: getTeamName(i);
+            pointsTable[i].gamesPlayed=allTeams::getGamesPlayed(i);
+            pointsTable[i].won= allTeams:: getGamesWon(i);
+            pointsTable[i].drawn=allTeams:: getGamesDrawn(i);
+            pointsTable[i].lost = allTeams:: getGamesLost(i);
+            pointsTable[i].goalsFor = allTeams:: getGoalsFor(i);
+            pointsTable[i].goalsAgainst = allTeams:: getGoalsAgainst(i);
+            pointsTable[i].goalDiff = allTeams:: getGoalDiff(i);
+            pointsTable[i].points = allTeams:: getPoints(i);
+            fairTable[i].teamName = allTeams:: getTeamName(i);
+            fairTable[i].demeritPoints = allTeams:: getDemeritPoints(i);
+            fairTable[i].redCards = allTeams:: getRedCards(i);
+            fairTable[i].yellowCards = allTeams:: getYellowCards(i);
+        }
+        sort(pointsTable+1, pointsTable+1+5, cmp1);
+        sort(fairTable+1, fairTable+1+5, cmp2);
+    }
+
+
+    void displayPointsTable(){
+        refreshTables();
+
+        cout<<setw(63)<<"############......POINTS TABLE........############"<<endl;
+        cout<<setw(63)<<"#------------------------------------------------#"<<endl;
+        cout<<setw(63)<<"#   Inter Department Football Tournament of JU   #"<<endl;
+        cout<<setw(63)<<"#________________________________________________#"<<endl;
+        cout<<setw(63)<<"##__###__###__###__###__###__###__###__###__###__#"<<endl<<endl;
+        cout<<"----------------------------------------------------------------------------"<<endl;
+        cout<<"#"<<setw(15)<<"TEAM NAME"<<setw(9)<<" GAMES "<<setw(5)<<" WON "<<setw(5)<<" DRAWN "<<setw(5)<<" LOST "<<setw(3)<<" GOALS"<<setw(5)<<" GOALS "<<setw(5)<<"   GOAL    "<<setw(5)<<"  POINTS"<<endl;
+        cout<<setw(17)<<"        "<<" PLAYED"<<"   "<<setw(3)<<"     "<<setw(5)<<"      "<<setw(5)<<"      FOR "<<setw(3)<<"  AGAINST "<<setw(3)<<"DIFERRENCE "<<setw(5)<<"      "<<endl<<endl;
+        for(int i=1; i<=5; i++){
+            cout<<i<<". "<<setw(13)<<pointsTable[i].teamName<<setw(5)
+            <<pointsTable[i].gamesPlayed<<setw(7)<<pointsTable[i].won<<setw(7)
+            <<pointsTable[i].drawn<<setw(6)<<pointsTable[i].lost<<setw(6)<<pointsTable[i].goalsFor<<setw(7)<<
+            pointsTable[i].goalsAgainst<<setw(8)<<pointsTable[i].goalDiff<<setw(10)<<pointsTable[i].points<<endl;
+        }
+        cout<<"____________________________________________________________________________"<<endl<<endl;
+    }
+    void displayFairPlayTable(){
+
+        refreshTables();
+
+        cout<<setw(55)<<"#############.....FAIR-PLAY TABLE.....############"<<endl;
+        cout<<setw(55)<<"#------------------------------------------------#"<<endl;
+        cout<<setw(55)<<"#   Inter Department Football Tournament of JU   #"<<endl;
+        cout<<setw(55)<<"#________________________________________________#"<<endl;
+        cout<<setw(55)<<"##__###__###__###__###__###__###__###__###__###__#"<<endl<<endl;
+        cout<<"----------------------------------------------------------------"<<endl;
+        cout<<"#"<<setw(15)<<" TEAM-NAME"<<setw(13)<<"   DEMERIT-POINTS "<<setw(12)<<" YELLOW-CARDS "<<setw(12)<<"RED-CARDS"<<endl<<endl;
+
+
+        for(int i=1; i<=5; i++){
+            cout<<i<<". "<<setw(13)<<fairTable[i].teamName<<setw(10)
+            <<fairTable[i].demeritPoints<<setw(14)<<fairTable[i].yellowCards<<setw(15)
+            <<fairTable[i].redCards<<endl;
+
+        }
+        cout<<"________________________________________________________________"<<endl<<endl;
+
+    }
+    void displayFixture(){
+        cout<<setw(50)<<"_____________________________________________"<<endl;
+        cout<<setw(50)<<"#--------------------------------------------#"<<endl;
+        cout<<setw(50)<<"###############....FIXTURE....################"<<endl;
+        cout<<setw(50)<<"#--------------------------------------------#"<<endl;
+        cout<<setw(50)<<"# Inter Department Football Tournament of JU #"<<endl;
+        cout<<setw(50)<<"#____________________________________________#"<<endl;
+        cout<<setw(50)<<"##############################################"<<endl<<endl;;
+
+        for(int i=1; i<=10; i++){
+            cout<<setw(42)<<"_____________________________"<<endl;
+            cout<<setw(42)<<"-----------------------------"<<endl;
+
+           cout<<setw(30)<<"MATCH : "<<i<<endl;
+           cout<<setw(f1[i].size()+18)<<f1[i]<<" vs "<<f2[i]<<endl;
+           cout<<setw(22)<<"INFO:: ";
+            if(res[i]=="D")cout<<"Match Drawn";
+            else if(res[i]=="")cout<<"Not been played yet";
+            else cout<<res[i]<<" won.";
+            cout<<endl;
+
+        }
+            cout<<setw(42)<<"_____________________________"<<endl;
+            cout<<setw(42)<<"-----------------------------"<<endl;
+
+
+        cout<<endl<<endl<<"NOTE:: All the matches will be played at Central Field, Jahangirnagar University."<<endl<<endl;
+    }
+
+    void displayTournamentResult(){
+
+        if(total_match>=10){
+              refreshTables();
+            cout<<"---------------------------------------------------------------"<<endl;
+            cout<<"THE CHAMPION OF INTER DEPARTMENT FOOTBALL TOURNAMENT OF"<<endl;
+            cout<<"JAHANGIRNAGAR UNIVERSITY 2017 is Department of "<<
+            pointsTable[1].teamName<<endl;
+            cout<<"_______________________________________________________________"<<endl;
+            cout<<"---------------------------------------------------------------"<<endl;
+            cout<<"PLAYER OF THE TOURNAMENT is "<<topScorersTable[1].goalScorer<<endl;
+            cout<<"AND HE IS FROM Department of "<<topScorersTable[1].teamName<<endl;
+            cout<<"_______________________________________________________________"<<endl;
+            cout<<"---------------------------------------------------------------"<<endl;
+
+            cout<<"FAIRPLAY AWARD WINNER IS Department of "<<fairTable[1].teamName<<endl;
+            cout<<"_______________________________________________________________"<<endl;
+            cout<<"---------------------------------------------------------------"<<endl;
+            cout<<"_____________________________THE END___________________________"<<endl<<endl;
+
+        }
+        else{
+            cout<<"The tournament has not been finished yet!!"<<endl<<endl;
+        }
+
+    }
+
+    void displayInfo()
+    {
+        cout<<setw(45)<<"#########################################"<<endl;
+        cout<<setw(44)<<"INTER DEPARTMENT FOOTBALL TOURNAMENT OF"<<endl;
+        cout<<setw(40)<<"JAHANGIRNAGAR UNIVERSITY - 2017"<<endl;
+        cout<<setw(45)<<"_________________________________________"<<endl<<endl;
+
+        cout<<"Tournament Info:"<<endl<<endl;
+        cout<<"1. 5 teams are participating in this tournament."<<endl;
+        cout<<"2. Every team has 11 players."<<endl;
+        cout<<"3. Each team will play a match again every other"<<endl;
+        cout<<"   teams."<<endl;
+        cout<<"4. 3 points for winning a match and 1 point for"<<endl;
+        cout<<"   a draw."<<endl;
+        cout<<"5. For every yellow cards a team will cost  10 "<<endl;
+        cout<<"   demerit points and for every red cards a team"<<endl;
+        cout<<"   will cost 20 demerit points."<<endl;
+        cout<<"6. Top team of the league table will be anounced"<<endl;
+        cout<<"   the champion."<<endl<<endl;
+
+        cout<<"################___THE END____###################"<<endl;
+    }
+};
+
+void userInterface();
+int main()
+{
+    userInterface();
+    return 0;
+}
+
+
+void userInterface()
+{
+    tournament a;
+    a.setAllTeams();
+    int sp;
+
+    while(1){
+            cout<<endl<<endl;
+        cout<<setw(60)<<"###################################################"<<endl;
+        cout<<setw(60)<<"#-------------------------------------------------#"<<endl;
+        cout<<setw(60)<<"#WELCOME TO THE JU FOOTBALL TOURNAMENT APPLICATION#"<<endl;
+        cout<<setw(60)<<"#-------------------------------------------------#"<<endl;
+        cout<<setw(60)<<"###################################################"<<endl;
+        cout<<setw(60)<<"#_________________________________________________#"<<endl;
+        cout<<setw(60)<<"#_________________________________________________#"<<endl;
+        cout<<setw(60)<<"#___________________MAIN MENU_____________________#"<<endl;
+        cout<<setw(60)<<"#_________________________________________________#"<<endl;
+        cout<<setw(60)<<"#                                                 #"<<endl;
+        cout<<setw(60)<<"#  OPTIONS:                                       #"<<endl;
+        cout<<setw(60)<<"#-------------------------------------------------#"<<endl;
+        cout<<setw(60)<<"#  1. Show Tournament Details                     #"<<endl;
+        cout<<setw(60)<<"#  2. Take Result of a game as input              #"<<endl;
+        cout<<setw(60)<<"#  3. Display the current Points Table            #"<<endl;
+        cout<<setw(60)<<"#  4. Display the current Fair-Play Table         #"<<endl;
+        cout<<setw(60)<<"#  5. Display the Top Goal Scorers List           #"<<endl;
+        cout<<setw(60)<<"#  6. Display the Tournament Result               #"<<endl;
+        cout<<setw(60)<<"#  7. Exit the Program.                           #"<<endl;
+        cout<<setw(60)<<"#-------------------------------------------------#"<<endl<<endl;
+
+        cout<<setw(28)<<"Enter you choice : ";
+        cin>>sp;
+        if(sp==7)return;
+        else if(sp==1)a.displayInfo();
+        else if(sp==2)a.takeInput();
+        else if(sp==3)a.displayPointsTable();
+        else if(sp==4)a.displayFairPlayTable();
+        else if(sp==5)a.displayTopScorersTable();
+        else if(sp==6)a.displayTournamentResult();
+        cout<<endl;
+    }
+}

@@ -1,0 +1,961 @@
+#include <bits/stdc++.h>
+using  namespace std;
+
+struct data
+{
+    int games_played, won, drawn, lost, goals_for, goals_against, goal_difference, points, d_points;
+    string TEAM_NAME;
+    data()
+    {
+        TEAM_NAME="";
+        games_played=0;
+        won=0;
+        drawn=0;
+        lost=0;
+        goals_for=0;
+        goals_against=0;
+        goal_difference=0;
+        points=0;
+        d_points=0;
+    }
+};
+
+bool cmp(data lhs, data rhs)
+{
+    if(lhs.points>rhs.points)return true;
+    else if(lhs.points==rhs.points && lhs.goal_difference>rhs.goal_difference)return true;
+    else if(lhs.points==rhs.points && lhs.goal_difference==rhs.goal_difference && lhs.goals_for>rhs.goals_for)return true;
+    else if(lhs.points==rhs.points && lhs.goal_difference==rhs.goal_difference && lhs.goals_for==rhs.goals_for && lhs.TEAM_NAME<rhs.TEAM_NAME)return true;
+    else return false;
+}
+
+class player
+{
+    string name;
+
+public:
+    void get_player()
+    {
+        cout<<"Enter name: "<<endl;
+        cin>>name;
+    }
+
+    void display_player()
+    {
+        cout<<"Name : "<<name<<endl;
+    }
+};
+
+class matches
+{
+protected:
+    int won, drawn, lost, played;
+
+public:
+    matches(){
+        played=0;
+    won=0;
+    drawn=0;
+    lost=0;
+    }
+
+};
+
+class goals
+{
+protected:
+    int goals_for, goals_against;
+public:
+    goals(){
+        goals_for=0;
+        goals_against=0;
+    }
+};
+
+class cards
+{
+protected:
+    int yellow, red;
+
+public:
+    cards(){
+        yellow=0;
+        red=0;
+    }
+
+};
+
+class teams : public matches, goals, cards
+{
+protected:
+    player p[2];
+    string team_name;
+    int demerit_points;
+
+    data team_data;
+
+public:
+    /*teams(){
+        demerit_points=0;
+    }*/
+    string give_me_d_team_name(){
+        return team_name;
+    }
+    void get_team(){
+        cout<<"Enter team name: "<<endl;
+        cin>>team_name;
+        cout<<"Enter player names: "<<endl;
+        for(int i=0; i<1; i++){
+            p[i].get_player();
+        }
+    }
+        void display_team()
+        {
+            cout<<"Information of team "<<team_name<<":"<<endl;
+
+            for(int i=0; i<1; i++){
+                p[i].display_player();
+            }
+        }
+
+        /*void update_demerit_points(){
+            demerit_points = yellow*10+red*20;
+        }*/
+
+
+
+    int ret_played_matches()
+    {
+        return played;
+    }
+
+    int ret_won_matches()
+    {
+        return won;
+    }
+
+    int ret_lost_matches()
+    {
+        return lost;
+    }
+    int ret_drawn_matches()
+    {
+        return drawn;
+    }
+
+    int ret_goals_for()
+    {
+        return goals_for;
+    }
+    int ret_goals_against()
+    {
+        return goals_against;
+    }
+    int ret_yellow_cards()
+    {
+        return yellow;
+    }
+
+    int ret_red_cards()
+    {
+        return red;
+    }
+
+
+   ///Increment Part***************************
+
+    void yellow_inc(int x){
+        yellow+=x;
+    }
+    void red_inc(int x){
+        red+=x;
+    }
+    void goals_for_inc(int x){
+        goals_for+=x;
+    }
+    void goals_against_inc(int x){
+        goals_against+=x;
+    }
+    void played_inc(){
+        played++;
+    }
+    void won_inc(){
+        won++;
+    }
+    void drawn_inc(){
+        drawn++;
+    }
+    void lost_inc(){
+        lost++;
+    }
+
+    ///*************************************
+
+};
+
+
+
+class all_teams : public teams
+{
+protected:
+    teams t[6];
+    data info[6];
+
+    string fix1[20], fix2[20];
+    map<string, int> str_int;
+    map<int, string>int_str;
+    string state_of_match[20];
+    int no_of_games;
+
+
+public:
+    all_teams()
+    {
+        no_of_games=0;
+        for(int i=1; i<15; i++){
+            state_of_match[i]="NOT PLAYED";
+        }
+    }
+    void get_all_teams(){
+    for(int i=0; i<5; i++){
+        cout<<"Enter the informations of team "<<i+1<<endl;
+        t[i].get_team();
+    }
+
+    for(int i=0; i<5; i++){
+        str_int[t[i].give_me_d_team_name()]=i;
+        int_str[i]=t[i].give_me_d_team_name();
+    }
+
+    }
+
+    void display_all_teams(){
+        for(int i=0; i<5; i++){
+        cout<<"Informations of team "<<i+1<<":"<<endl;
+        t[i].display_team();
+        }
+    }
+
+    ///Result_input_section**************************
+
+    void get_match_results()
+    {
+        int g1, g2, y1, y2, r1, r2;
+        cout<<endl;
+        if(no_of_games>=10){
+            cout<<"Results of all matches have been taken"<<endl<<endl;
+            return;
+        }
+        cout<<"##JU FOOTBALL TOURNAMENT##"<<endl;
+        cout<<"     MATCH NO : "<<no_of_games+1<<endl;
+        cout<<"*** "<<fix1[no_of_games]<<" vs "<<fix2[no_of_games]<<" ***"<<endl;
+        cout<<endl<<"Enter Number of goals scored by "<<fix1[no_of_games]<<" : "<<endl;cin>>g1;
+        cout<<"Enter Number of goals scored by "<<fix2[no_of_games]<<" : "<<endl;cin>>g2;
+        cout<<endl<<"Enter cards received by "<<fix1[no_of_games]<<" ::"<<endl;
+        cout<<"Number of red cards : ";cin>>r1;
+        cout<<"Number of yellow cards : ";cin>>y1;
+        cout<<endl<<"Enter cards received by "<<fix2[no_of_games]<<" ::"<<endl;
+        cout<<"Number of red cards : ";cin>>r2;
+        cout<<"Number of yellow cards : ";cin>>y2;
+
+        t[str_int[fix1[no_of_games]]].played_inc();
+        t[str_int[fix2[no_of_games]]].played_inc();
+
+        if(g1>g2){
+                t[str_int[fix1[no_of_games]]].won_inc();
+                t[str_int[fix2[no_of_games]]].lost_inc();
+        }
+        else if(g2>g1){
+        t[str_int[fix2[no_of_games]]].won_inc();
+        t[str_int[fix1[no_of_games]]].lost_inc();
+        }
+        else{
+            t[str_int[fix1[no_of_games]]].drawn_inc();
+            t[str_int[fix2[no_of_games]]].drawn_inc();
+        }
+
+        t[str_int[fix1[no_of_games]]].goals_for_inc(g1);
+        t[str_int[fix1[no_of_games]]].goals_against_inc(g2);
+        t[str_int[fix1[no_of_games]]].yellow_inc(y1);
+        t[str_int[fix1[no_of_games]]].red_inc(r1);
+
+        t[str_int[fix2[no_of_games]]].goals_for_inc(g2);
+        t[str_int[fix2[no_of_games]]].goals_against_inc(g1);
+        t[str_int[fix2[no_of_games]]].yellow_inc(y2);
+        t[str_int[fix2[no_of_games]]].red_inc(r2);
+        no_of_games++;
+
+    }
+
+
+    ///**************************************************
+
+
+
+    ///Inherited_data_returning_from_base_classes*********
+
+    string give_me_d_team_name(){
+        return (teams:: give_me_d_team_name());
+    }
+
+    int  ret_played_matches(){
+        return (teams:: ret_played_matches());
+    }
+
+    int ret_won_matches()
+    {
+        return (teams:: ret_won_matches());
+    }
+    int ret_lost_matches()
+    {
+        return (teams:: ret_lost_matches());
+    }
+    int ret_drawn_matches()
+    {
+        return (teams:: ret_drawn_matches());
+    }
+
+    int ret_goals_for()
+    {
+        return (teams:: ret_goals_for());
+    }
+
+    int ret_goals_against()
+    {
+        return (teams:: ret_goals_against());
+    }
+
+    int ret_yellow_cards()
+    {
+        return (teams:: ret_yellow_cards());
+    }
+    int ret_red_cards()
+    {
+        return (teams:: ret_red_cards());
+    }
+
+    ///***********************************************
+
+
+
+    ///Fixture related functions************************
+
+    void build_fixture()
+    {
+        int cnt=-1;
+        for(int i=0; i<5; i++){
+            for(int j=i+1; j<5; j++){
+                fix1[++cnt]=t[i].give_me_d_team_name();
+                fix2[cnt]+=t[j].give_me_d_team_name();
+            }
+        }
+
+        swap(fix1[2], fix1[7]);
+        swap(fix1[4], fix1[9]);
+    }
+
+    void show_fixture()
+    {
+
+        cout<<"#######################################################"<<endl;
+        cout<<"#######################################################"<<endl;
+        for(int i=0; i<10; i++){
+                cout<<"##   ";
+            cout<<fix1[i]<<" vs "<<fix2[i]<<"       ##"<<endl;
+        }
+        cout<<"#######################################################"<<endl;
+        cout<<"#######################################################"<<endl;
+    }
+
+
+    ///***************************************************************************
+
+    void update_info()
+    {
+        for(int i=0; i<5; i++){
+                if(info[i].TEAM_NAME==""){
+                    info[i].TEAM_NAME=t[i].give_me_d_team_name();
+                }
+            info[i].games_played = t[i].ret_played_matches();
+            info[i].won=t[i].ret_won_matches();
+            info[i].drawn=t[i].ret_drawn_matches();
+            info[i].lost=t[i].ret_lost_matches();
+            info[i].goals_for=t[i].ret_goals_for();
+            info[i].goals_against=t[i].ret_goals_against();
+            info[i].goal_difference=t[i].ret_goals_for()-t[i].ret_goals_against();
+            info[i].points=t[i].ret_won_matches()*3+t[i].ret_drawn_matches();
+
+        }
+        sort(info, info+5, cmp);
+    }
+
+    void show_info()
+    {
+        cout<<"      GP   WON   DRAWN   LOST   GF   GA   GD   PTS"<<endl;
+        for(int i=0; i<5; i++){
+            cout<<info[i].TEAM_NAME<<"    ";
+            cout<<info[i].games_played<<"      "<<info[i].won<<"     "<<info[i].drawn<<"      ";
+            cout<<info[i].lost<<"    "<<info[i].goals_for<<"    "<<info[i].goals_against<<"      ";
+            cout<<info[i].goal_difference<<"    "<<info[i].points<<endl;
+        }
+    }
+
+};
+
+
+class points_table : public all_teams
+{
+protected:
+
+public:
+
+    void get_all_teams()
+    {
+        all_teams:: get_all_teams();
+    }
+
+    void display_all_teams()
+    {
+        all_teams:: display_all_teams();
+    }
+
+    void update_points_table()
+    {
+        all_teams:: update_info();
+    }
+
+    void show_points_table()
+    {
+        all_teams:: show_info();
+    }
+
+    void get_match_results()
+    {
+        all_teams :: get_match_results();
+    }
+
+    void build_fixture()
+    {
+        all_teams :: build_fixture();
+    }
+
+    void show_fixture()
+    {
+        all_teams :: show_fixture();
+    }
+
+
+};
+
+
+
+
+int main()
+{
+   /*fixture a;
+   a.get_all_teams();
+   //a.display_all_teams();
+   a.build_fixture();
+   a.show_fixture();
+   /*a.display_all_teams();*/
+
+    points_table a;
+
+    a.get_all_teams();
+    a.build_fixture();
+    a.show_fixture();
+    //a.display_all_teams();
+    /*a.get_match_results();
+    a.get_match_results();
+    a.get_match_results();
+    a.update_points_table();
+    a.show_points_table();*/
+    //int x;
+    /*while(1)
+    {
+        cout<<"1. for#include <bits/stdc++.h>
+using  namespace std;
+
+struct data
+{
+    int games_played, won, drawn, lost, goals_for, goals_against, goal_difference, points, d_points;
+    string TEAM_NAME;
+    data()
+    {
+        TEAM_NAME="";
+        games_played=0;
+        won=0;
+        drawn=0;
+        lost=0;
+        goals_for=0;
+        goals_against=0;
+        goal_difference=0;
+        points=0;
+        d_points=0;
+    }
+};
+
+bool cmp(data lhs, data rhs)
+{
+    if(lhs.points>rhs.points)return true;
+    else if(lhs.points==rhs.points && lhs.goal_difference>rhs.goal_difference)return true;
+    else if(lhs.points==rhs.points && lhs.goal_difference==rhs.goal_difference && lhs.goals_for>rhs.goals_for)return true;
+    else if(lhs.points==rhs.points && lhs.goal_difference==rhs.goal_difference && lhs.goals_for==rhs.goals_for && lhs.TEAM_NAME<rhs.TEAM_NAME)return true;
+    else return false;
+}
+
+class player
+{
+    string name;
+
+public:
+    void get_player()
+    {
+        cout<<"Enter name: "<<endl;
+        cin>>name;
+    }
+
+    void display_player()
+    {
+        cout<<"Name : "<<name<<endl;
+    }
+};
+
+class matches
+{
+protected:
+    int won, drawn, lost, played;
+
+public:
+    matches(){
+        played=0;
+    won=0;
+    drawn=0;
+    lost=0;
+    }
+
+};
+
+class goals
+{
+protected:
+    int goals_for, goals_against;
+public:
+    goals(){
+        goals_for=0;
+        goals_against=0;
+    }
+};
+
+class cards
+{
+protected:
+    int yellow, red;
+
+public:
+    cards(){
+        yellow=0;
+        red=0;
+    }
+
+};
+
+class teams : public matches, goals, cards
+{
+protected:
+    player p[2];
+    string team_name;
+    int demerit_points;
+
+    data team_data;
+
+public:
+    /*teams(){
+        demerit_points=0;
+    }*/
+    string give_me_d_team_name(){
+        return team_name;
+    }
+    void get_team(){
+        cout<<"Enter team name: "<<endl;
+        cin>>team_name;
+        cout<<"Enter player names: "<<endl;
+        for(int i=0; i<1; i++){
+            p[i].get_player();
+        }
+    }
+        void display_team()
+        {
+            cout<<"Information of team "<<team_name<<":"<<endl;
+
+            for(int i=0; i<1; i++){
+                p[i].display_player();
+            }
+        }
+
+        /*void update_demerit_points(){
+            demerit_points = yellow*10+red*20;
+        }*/
+
+
+
+    int ret_played_matches()
+    {
+        return played;
+    }
+
+    int ret_won_matches()
+    {
+        return won;
+    }
+
+    int ret_lost_matches()
+    {
+        return lost;
+    }
+    int ret_drawn_matches()
+    {
+        return drawn;
+    }
+
+    int ret_goals_for()
+    {
+        return goals_for;
+    }
+    int ret_goals_against()
+    {
+        return goals_against;
+    }
+    int ret_yellow_cards()
+    {
+        return yellow;
+    }
+
+    int ret_red_cards()
+    {
+        return red;
+    }
+
+
+   ///Increment Part***************************
+
+    void yellow_inc(int x){
+        yellow+=x;
+    }
+    void red_inc(int x){
+        red+=x;
+    }
+    void goals_for_inc(int x){
+        goals_for+=x;
+    }
+    void goals_against_inc(int x){
+        goals_against+=x;
+    }
+    void played_inc(){
+        played++;
+    }
+    void won_inc(){
+        won++;
+    }
+    void drawn_inc(){
+        drawn++;
+    }
+    void lost_inc(){
+        lost++;
+    }
+
+    ///*************************************
+
+};
+
+
+
+class all_teams : public teams
+{
+protected:
+    teams t[6];
+    data info[6];
+
+    string fix1[20], fix2[20];
+    map<string, int> str_int;
+    map<int, string>int_str;
+    string state_of_match[20];
+    int no_of_games;
+
+
+public:
+    all_teams()
+    {
+        no_of_games=0;
+        for(int i=1; i<15; i++){
+            state_of_match[i]="NOT PLAYED";
+        }
+    }
+    void get_all_teams(){
+    for(int i=0; i<5; i++){
+        cout<<"Enter the informations of team "<<i+1<<endl;
+        t[i].get_team();
+    }
+
+    for(int i=0; i<5; i++){
+        str_int[t[i].give_me_d_team_name()]=i;
+        int_str[i]=t[i].give_me_d_team_name();
+    }
+
+    }
+
+    void display_all_teams(){
+        for(int i=0; i<5; i++){
+        cout<<"Informations of team "<<i+1<<":"<<endl;
+        t[i].display_team();
+        }
+    }
+
+    ///Result_input_section**************************
+
+    void get_match_results()
+    {
+        int g1, g2, y1, y2, r1, r2;
+        cout<<endl;
+        if(no_of_games>=10){
+            cout<<"Results of all matches have been taken"<<endl<<endl;
+            return;
+        }
+        cout<<"##JU FOOTBALL TOURNAMENT##"<<endl;
+        cout<<"     MATCH NO : "<<no_of_games+1<<endl;
+        cout<<"*** "<<fix1[no_of_games]<<" vs "<<fix2[no_of_games]<<" ***"<<endl;
+        cout<<endl<<"Enter Number of goals scored by "<<fix1[no_of_games]<<" : "<<endl;cin>>g1;
+        cout<<"Enter Number of goals scored by "<<fix2[no_of_games]<<" : "<<endl;cin>>g2;
+        cout<<endl<<"Enter cards received by "<<fix1[no_of_games]<<" ::"<<endl;
+        cout<<"Number of red cards : ";cin>>r1;
+        cout<<"Number of yellow cards : ";cin>>y1;
+        cout<<endl<<"Enter cards received by "<<fix2[no_of_games]<<" ::"<<endl;
+        cout<<"Number of red cards : ";cin>>r2;
+        cout<<"Number of yellow cards : ";cin>>y2;
+
+        t[str_int[fix1[no_of_games]]].played_inc();
+        t[str_int[fix2[no_of_games]]].played_inc();
+
+        if(g1>g2){
+                t[str_int[fix1[no_of_games]]].won_inc();
+                t[str_int[fix2[no_of_games]]].lost_inc();
+        }
+        else if(g2>g1){
+        t[str_int[fix2[no_of_games]]].won_inc();
+        t[str_int[fix1[no_of_games]]].lost_inc();
+        }
+        else{
+            t[str_int[fix1[no_of_games]]].drawn_inc();
+            t[str_int[fix2[no_of_games]]].drawn_inc();
+        }
+
+        t[str_int[fix1[no_of_games]]].goals_for_inc(g1);
+        t[str_int[fix1[no_of_games]]].goals_against_inc(g2);
+        t[str_int[fix1[no_of_games]]].yellow_inc(y1);
+        t[str_int[fix1[no_of_games]]].red_inc(r1);
+
+        t[str_int[fix2[no_of_games]]].goals_for_inc(g2);
+        t[str_int[fix2[no_of_games]]].goals_against_inc(g1);
+        t[str_int[fix2[no_of_games]]].yellow_inc(y2);
+        t[str_int[fix2[no_of_games]]].red_inc(r2);
+        no_of_games++;
+
+    }
+
+
+    ///**************************************************
+
+
+
+    ///Inherited_data_returning_from_base_classes*********
+
+    string give_me_d_team_name(){
+        return (teams:: give_me_d_team_name());
+    }
+
+    int  ret_played_matches(){
+        return (teams:: ret_played_matches());
+    }
+
+    int ret_won_matches()
+    {
+        return (teams:: ret_won_matches());
+    }
+    int ret_lost_matches()
+    {
+        return (teams:: ret_lost_matches());
+    }
+    int ret_drawn_matches()
+    {
+        return (teams:: ret_drawn_matches());
+    }
+
+    int ret_goals_for()
+    {
+        return (teams:: ret_goals_for());
+    }
+
+    int ret_goals_against()
+    {
+        return (teams:: ret_goals_against());
+    }
+
+    int ret_yellow_cards()
+    {
+        return (teams:: ret_yellow_cards());
+    }
+    int ret_red_cards()
+    {
+        return (teams:: ret_red_cards());
+    }
+
+    ///***********************************************
+
+
+
+    ///Fixture related functions************************
+
+    void build_fixture()
+    {
+        int cnt=-1;
+        for(int i=0; i<5; i++){
+            for(int j=i+1; j<5; j++){
+                fix1[++cnt]=t[i].give_me_d_team_name();
+                fix2[cnt]+=t[j].give_me_d_team_name();
+            }
+        }
+
+        swap(fix1[2], fix1[7]);
+        swap(fix1[4], fix1[9]);
+    }
+
+    void show_fixture()
+    {
+
+        cout<<"#######################################################"<<endl;
+        cout<<"#######################################################"<<endl;
+        for(int i=0; i<10; i++){
+                cout<<"##   ";
+            cout<<fix1[i]<<" vs "<<fix2[i]<<"       ##"<<endl;
+        }
+        cout<<"#######################################################"<<endl;
+        cout<<"#######################################################"<<endl;
+    }
+
+
+    ///***************************************************************************
+
+    void update_info()
+    {
+        for(int i=0; i<5; i++){
+                if(info[i].TEAM_NAME==""){
+                    info[i].TEAM_NAME=t[i].give_me_d_team_name();
+                }
+            info[i].games_played = t[i].ret_played_matches();
+            info[i].won=t[i].ret_won_matches();
+            info[i].drawn=t[i].ret_drawn_matches();
+            info[i].lost=t[i].ret_lost_matches();
+            info[i].goals_for=t[i].ret_goals_for();
+            info[i].goals_against=t[i].ret_goals_against();
+            info[i].goal_difference=t[i].ret_goals_for()-t[i].ret_goals_against();
+            info[i].points=t[i].ret_won_matches()*3+t[i].ret_drawn_matches();
+
+        }
+        sort(info, info+5, cmp);
+    }
+
+    void show_info()
+    {
+        cout<<"      GP   WON   DRAWN   LOST   GF   GA   GD   PTS"<<endl;
+        for(int i=0; i<5; i++){
+            cout<<info[i].TEAM_NAME<<"    ";
+            cout<<info[i].games_played<<"      "<<info[i].won<<"     "<<info[i].drawn<<"      ";
+            cout<<info[i].lost<<"    "<<info[i].goals_for<<"    "<<info[i].goals_against<<"      ";
+            cout<<info[i].goal_difference<<"    "<<info[i].points<<endl;
+        }
+    }
+
+};
+
+
+class points_table : public all_teams
+{
+protected:
+
+public:
+
+    void get_all_teams()
+    {
+        all_teams:: get_all_teams();
+    }
+
+    void display_all_teams()
+    {
+        all_teams:: display_all_teams();
+    }
+
+    void update_points_table()
+    {
+        all_teams:: update_info();
+    }
+
+    void show_points_table()
+    {
+        all_teams:: show_info();
+    }
+
+    void get_match_results()
+    {
+        all_teams :: get_match_results();
+    }
+
+    void build_fixture()
+    {
+        all_teams :: build_fixture();
+    }
+
+    void show_fixture()
+    {
+        all_teams :: show_fixture();
+    }
+
+
+};
+
+
+
+
+int main()
+{
+   /*fixture a;
+   a.get_all_teams();
+   //a.display_all_teams();
+   a.build_fixture();
+   a.show_fixture();
+   /*a.display_all_teams();*/
+
+    points_table a;
+
+    a.get_all_teams();
+    a.build_fixture();
+    a.show_fixture();
+    //a.display_all_teams();
+    /*a.get_match_results();
+    a.get_match_results();
+    a.get_match_results();
+    a.update_points_table();
+    a.show_points_table();*/
+    //int x;
+    /*while(1)
+    {
+        cout<<"1. for
+    }*/
+
+   return 0;
+}
+
+
+    }*/
+
+   return 0;
+}

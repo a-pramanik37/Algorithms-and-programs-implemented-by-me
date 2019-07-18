@@ -1,0 +1,68 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+
+
+int i,j ,k, p, x, y, src, des, n, m, z;
+#define mx 987654321;
+vector<int>a[100], co[100];
+queue<int>q;
+int vis[100];
+int cost[100];
+
+int main()
+{
+
+while(scanf("%d%d", &n, &m)==2){
+
+        for(i=1; i<=m; i++){
+            scanf("%d%d%d", &x, &y, &p);
+
+            a[x].push_back(y);
+            a[y].push_back(x);
+            co[x].push_back(p);
+            co[y].push_back(p);
+        }
+
+
+         scanf("%d%d",&src, &des);
+
+         q.push(src);
+        memset(vis, -1, sizeof vis);
+
+        for(i=1; i<=n; i++)cost[i]=mx;
+
+         vis[src]=0;
+         cost[src]=0;
+         while(!q.empty()){
+
+        x  = q.front();
+        q.pop();
+
+        for(i=0; i <a[x].size(); i++){
+
+            y = a[x][i];
+
+            if(vis[y]==-1){
+                vis[y]=1;
+                cost[y]=cost[x]+co[x][i];
+                q.push(y);
+            }
+            else if(cost[x]+co[x][i]<cost[y]){
+                cost[y]=cost[x]+co[x][i];
+                q.push(y);
+            }
+
+
+         }
+         }
+        printf("Minimum cost is %d\n", cost[des]);
+
+        for(i=1; i<=n; i++){
+            a[i].clear();
+            co[i].clear();
+        }
+
+}
+            return 0;
+}

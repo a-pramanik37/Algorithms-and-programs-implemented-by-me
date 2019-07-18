@@ -1,0 +1,146 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+struct gt
+{
+    int pro;
+    int time;
+};
+int arr[1000], bur[1000], tmp[1000], wt[1000], tq, n;
+vector<gt>v;
+bool isAllDone()
+{
+    int cnt=0;
+    for(int i=0; i<n; i++){
+        if(tmp[i]==0)cnt++;
+    }
+    if(cnt==n)return true;
+    return false;
+}
+
+int main()
+{
+    int i, j, k, flg, min1;
+    struct gt tt;
+    printf("Enter number of processes : ");
+    scanf("%d", &n);
+
+    for(i=0; i<n; i++){
+        printf("Enter burst time and arrival time of process %d : ", i);
+        scanf("%d%d", &bur[i], &arr[i]);
+        tmp[i]=bur[i];
+    }
+
+    printf("Now enter time quantam : ");
+    scanf("%d", &tq);
+
+    int now;
+
+    for(i=0; i<n; i++){
+        if(arr[i]==0){
+            now=i;
+            break;
+        }
+    }
+    int tq2=0;
+
+    for(i=0;isAllDone()==false ;i++){
+
+        if(tq2==tq || tmp[now]==0){
+            flg=0;
+
+            for(j=now+1; j<n; j++){
+                if(arr[j]<=i && tmp[j]>0){
+                    flg=1;
+                    now=j;
+                    break;
+                }
+            }
+
+            if(flg==0){
+                for(j=0; j<now; j++){
+                    if(arr[j]<=i && tmp[j]>0){
+                        flg=1;
+                        now=j;
+                        break;
+                    }
+                }
+            }
+
+            if(flg==0){
+                min1=99999;
+                for(j=0; j<n; j++){
+                    if(arr[j]<min1 && tmp[j]>0){
+                        min1=arr[j];
+                        now=j;
+                    }
+                }
+            }
+           tq2=0;
+        }
+        if(i<arr[now])i=arr[now];
+
+       tt.pro=now;
+       tt.time=i;
+
+         for(j=0; j<n; j++){
+        if(arr[j]<=i && j!=now && tmp[j]>0){
+            wt[j]++;
+        }
+       }
+       tq2++;
+       v.push_back(tt);
+       tmp[now]--;
+    }
+
+    double sum=0.0;
+printf("\t***Individual Waiting time***\n");
+
+ printf("\tProcess       waiting time\n");
+ for(i=0; i<n; i++){
+    printf("\t  p%d            %d\n",i,wt[i]);
+    sum+=(double)wt[i];
+ }
+
+ printf("\n***Average of waiting time = %.3lf s\n", sum/n);
+
+ printf("\n\t\t***Gantt Chart***\n");
+
+    int process, startTime, endTime;
+    int cnt=0;
+    for(i=0; i<v.size();){
+            cnt++;
+        process = v[i].pro;
+        startTime = v[i].time;
+        endTime;
+        for(j=i+1; j<v.size(); j++){
+            if(v[j].pro!=process){
+                i=j;
+                endTime=v[j-1].time+1;
+                break;
+            }
+        }
+        if(j>=(v.size()-1)){
+            endTime=v[v.size()-1].time+1;
+            i=v.size();
+        }
+        printf("%d __[p%d]__ %d  ", startTime, process, endTime);
+    }
+
+     printf("\n");
+
+}
+
+/*4
+2 0
+4 3
+1 4
+6 13
+2
+
+4
+11 0
+9 3
+3 4
+6 5
+2*/

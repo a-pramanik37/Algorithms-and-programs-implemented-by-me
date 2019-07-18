@@ -1,0 +1,57 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+#define pb push_back
+#define ll long long int
+#define inf 2000000000
+#define pi (2.0*acos(0.0))
+#define vsort(v)   sort(v.begin(),v.end())
+#define ull unsigned long long int
+#define mem(a, b) memset(a, b, sizeof a)
+
+int a[100005], tab[100005][25];
+
+int query(int l, int r){
+
+        int d = (r-l)+1;
+        int x = 31- (__builtin_clz(d));
+
+        int res = min(tab[x][l], tab[x][r-(1<<x)+1]);
+        return res;
+
+}
+
+int main()
+
+{
+        int i, j, k, q, n, r, c, s, e;
+        while(scanf("%d%d", &n, &q)==2){
+            for(i=1; i<=n; i++){
+                scanf("%d", &a[i]);
+                tab[0][i]=a[i];
+            }
+
+            for(r =1; (1<<r)<=n; r++){
+                for(c=1; c+(1<<(r-1))<=n; c++){
+                    tab[r][c]=min(tab[r-1][c], tab[r-1][c+(1<<(r-1))]);
+                }
+            }
+
+            /*for(r =1; (1<<r)<=n; r++){
+                for(c=1; c+(1<<(r-1))<=n; c++){
+                    printf("%d ", tab[r][c]);
+                }
+                printf("\n");
+            }*/
+
+            for(i=1; i<=q; i++){
+                scanf("%d%d", &s, &e);
+                printf("%d\n", query(s, e));
+            }
+
+        }
+        return 0;
+}
+
+//8 10
+//7 3 4 5 1 2 9 8

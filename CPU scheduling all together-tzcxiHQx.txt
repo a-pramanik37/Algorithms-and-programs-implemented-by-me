@@ -1,0 +1,754 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+struct gt
+{
+    int pro;
+    int time;
+};
+
+int arr[1000], bur[1000], pr[1000], wt[1000], tmp[1000], n, tq;
+bool inputTaken;
+vector<double>vFcfs, vSjfP, vSjfNP, vPriority, vRoundRobin;
+bool isAllDone()
+{
+    int cnt=0;
+    for(int i=0; i<n; i++){
+        if(tmp[i]==0)cnt++;
+    }
+    if(cnt==n)return true;
+    return false;
+}
+
+void takeInput()
+{
+    printf("Enter number of processes : ");
+    cin>>n;
+
+    for(int i=0; i<n; i++){
+        printf("Enter arrival time,burst time and priority of process p%d : ", i);
+        cin>>arr[i]>>bur[i]>>pr[i];
+    }
+    printf("Enter time slice for Round-Robin algorithm : ");
+    cin>>tq;
+    inputTaken=true;
+
+}
+
+void fcfs()
+{
+    if(inputTaken==false){
+        printf("\n\tNo input data detected, Give input first!\n");
+        return;
+    }
+    memset(wt, 0, sizeof wt);
+    vFcfs.clear();
+    int arrTemp[1000];
+    int burTemp[1000];
+    int process[1000];
+    int i, j, k;
+    for(i=0; i<n; i++){
+        process[i]=i;
+        arrTemp[i]=arr[i];
+        burTemp[i]=bur[i];
+    }
+
+    for(i=0; i<n; i++){
+        for(j=i+1; j<n; j++){
+            if(arrTemp[i]>arrTemp[j]){
+                swap(arrTemp[i], arrTemp[j]);
+                swap(burTemp[i], burTemp[j]);
+                swap(process[i], process[j]);
+            }
+        }
+    }
+
+    printf("\t##Results for FCFS Algorithm ##\n");
+
+    wt[process[0]]=0;
+
+    printf("\t\t****Gantt Chart****\n");
+    printf("%d__[p%d]__%d  ", arrTemp[0], process[0], arrTemp[0]+burTemp[0]);
+
+    int presentTime=arrTemp[0]+burTemp[0];
+
+
+    double sum=0.0;
+
+
+
+    for(i=1; i<n; i++){
+        int strt, endd;
+
+        if(presentTime>arrTemp[i]){
+            wt[i]=presentTime-arrTemp[i];
+            strt=presentTime;
+            endd=presentTime+burTemp[i];
+            presentTime=endd;
+        }
+        else{
+            wt[i]=0;
+            strt=arrTemp[i];
+            endd=arrTemp[i]+burTemp[i];
+            presentTime=endd;
+        }
+
+        printf("%d__[p%d]__%d   ", strt, process[i], endd);
+        sum+=(double)wt[i];
+    }
+    printf("\n");
+
+    printf("\t****Individual Waiting time****");
+    printf("\n Process       Waiting time\n");
+
+    for(i=0; i<n; i++){
+        printf("    p%d            %d\n", i, wt[i]);
+        vFcfs.push_back((double)wt[i]);
+    }
+    vFcfs.push_back(sum/n);
+    //printf("\n****Average of waiting time : %.2lf\n", sum/n);
+    cout<<"\n****Average of waiting time : "<<setprecision(3)<<sum/n<<endl;
+}
+
+
+void sjfPreem()
+{
+    if(inputTaken==false){
+        printf("***\tNo input data detected, Give input first!\n");
+        return;
+    }
+    memset(wt, 0, sizeof wt);
+    vSjfP.clear();
+    int i, j, k, x, y, min1, min2, st, flg;
+    struct gt temp;
+    vector<gt>v;
+
+    for(i=0; i<n; i++)
+    {
+        tmp[i]=bur[i];
+    }
+
+    min1=99999999;
+
+    for(i=0; i<n; i++)
+    {
+        if(arr[i]==0)
+        {
+            if(bur[i]<min1)
+            {
+                min1 = bur[i];
+                st=i;
+            }
+        }
+    }
+
+    memset(wt, 0, sizeof wt);
+
+    temp.pro=st;
+    temp.time=0;
+    v.push_back(temp);
+
+    int t=1;
+    int now = st;
+    tmp[now]--;
+
+    while(1)
+    {
+        min1=tmp[now];
+        for(i=0; i<n; i++)
+        {
+            if(i!=now && tmp[i]<min1 && tmp[i]>0 && arr[i]<=t)
+            {
+                min1=tmp[i];
+                now=i;
+            }
+        }
+
+        for(i=0; i<n; i++)
+        {
+            if(i!=now && tmp[i]>0 && arr[i]<=t)
+            {
+                wt[i]++;
+            }
+        }
+
+        temp.pro=now;
+        temp.time=t;
+        v.push_back(temp);
+
+        tmp[now]--;
+        t++;
+
+        if(tmp[now]==0)
+        {
+
+            min1 = 99999999;
+            flg=0;
+            for(i=0; i<n; i++)
+            {
+                if(arr[i]<=t && tmp[i]!=0 && min1>tmp[i])
+                {
+                    flg=1;
+                    min1=tmp[i];
+                    now=i;
+                }
+            }
+
+            if(flg==0)
+            {
+                min1=99999999;
+                min2=99999999;
+                for(i=0; i<n; i++)
+                {
+                    if(tmp[i]>0 && arr[i]<=min1 && tmp[i]<min2)
+                    {
+                        min1=arr[i];
+                        min2=tmp[i];
+                        t=arr[i];
+                        now=i;
+                    }
+                }
+
+            }
+
+        }
+
+        int koyta=0;
+
+        for(i=0; i<n; i++)
+        {
+            if(tmp[i]==0)koyta++;
+        }
+        if(koyta==n)break;
+    }
+
+    printf("\t##Results for SJF(Preemptive) Algorithm##\n");
+
+
+    printf("\t****Individual Waiting time****\n");
+    printf("\t  Process            Waiting Time\n");
+
+    for(i=0; i<n; i++)
+    {
+        printf("\t      p%d                 %d\n", i, wt[i]);
+        vSjfP.push_back((double)wt[i]);
+    }
+    printf("\n");
+
+
+
+    double sum = 0.0;
+
+    for(i=0; i<n; i++)
+    {
+        sum+=(double)wt[i];
+    }
+    //printf("****Average waiting time : %.3lf\n", sum/n);
+    cout<<"\n****Average of waiting time : "<<setprecision(3)<<sum/n<<endl;
+    vSjfP.push_back(sum/n);
+
+    printf("\t\t*****Gantt Chart*****\n\n");
+
+
+    int process, startTime, endTime;
+    int cnt=0;
+    for(i=0; i<v.size();){
+            cnt++;
+        process = v[i].pro;
+        startTime = v[i].time;
+        endTime;
+        for(j=i+1; j<v.size(); j++){
+            if(v[j].pro!=process){
+                i=j;
+                endTime=v[j-1].time+1;
+                break;
+            }
+        }
+        if(j>=(v.size()-1)){
+            endTime=v[v.size()-1].time+1;
+            i=v.size();
+        }
+        printf("%d__[p%d]__%d  ", startTime, process, endTime);
+    }
+
+
+     printf("\n");
+}
+
+void sjfNonPreem()
+{
+
+    if(inputTaken==false){
+        printf("\n\tNo input data detected, Give input first!\n");
+        return;
+    }
+    memset(wt, 0, sizeof wt);
+    vSjfNP.clear();
+    int arrTemp[1000];
+    int burTemp[1000];
+    int process[1000];
+    int i, j;
+    for(i=0; i<n; i++){
+        arrTemp[i]=0;
+        process[i]=i;
+        burTemp[i]=bur[i];
+    }
+
+    for(i=0; i<n; i++){
+        for(j=i+1; j<n; j++){
+            if(burTemp[i]>burTemp[j]){
+                swap(burTemp[i], burTemp[j]);
+                swap(process[i], process[j]);
+            }
+        }
+    }
+
+    wt[process[0]]=0;
+
+    printf("##Results for SJF(Non-Preemptive) Algorithm##\n");
+
+    printf("\t\t****Gantt Chart****\n");
+    printf("%d__[p%d]__%d  ", arrTemp[0], process[0], arrTemp[0]+burTemp[0]);
+    int presentTime=arrTemp[0]+burTemp[0];
+
+    double sum=0.0;
+
+
+
+    for(i=1; i<n; i++){
+        int strt, endd;
+
+        if(presentTime>arrTemp[i]){
+            wt[i]=presentTime-arrTemp[i];
+            strt=presentTime;
+            endd=presentTime+burTemp[i];
+            presentTime=endd;
+        }
+        else{
+            wt[i]=0;
+            strt=arrTemp[i];
+            endd=arrTemp[i]+burTemp[i];
+            presentTime=endd;
+        }
+
+        printf("%d__[p%d]__%d   ", strt, process[i], endd);
+        sum+=(double)wt[i];
+    }
+    printf("\n");
+
+    printf("\t****Individual Waiting time****");
+    printf("\n Process       Waiting time\n");
+
+    for(i=0; i<n; i++){
+        printf("    p%d            %d\n", i, wt[i]);
+        vSjfNP.push_back((double)wt[i]);
+    }
+    vSjfNP.push_back(sum/n);
+    //printf("\n*****Average of waiting time : %.2lf\n", sum/n);
+    cout<<"\n****Average of waiting time : "<<setprecision(3)<<sum/n<<endl;
+}
+
+void priorityScheduling()
+{
+    if(inputTaken==false){
+        printf("\t****No input data detected, Give input first!\n");
+        return;
+    }
+    memset(wt, 0, sizeof wt);
+    vPriority.clear();
+    int i, j,k, x, y;
+
+    int min1, min2, mx, st, flg;
+
+    struct gt temp;
+    vector<gt>v;
+
+    for(i=0; i<n; i++)
+    {
+        tmp[i]=bur[i];
+    }
+
+    mx = 0;
+    st=0;
+    for(i=0; i<n; i++)
+    {
+        if(arr[i]==0)
+        {
+            if(pr[i]>mx)
+            {
+                mx = pr[i];
+                st=i;
+            }
+        }
+    }
+
+    memset(wt, 0, sizeof wt);
+
+    temp.pro=st;
+    temp.time=0;
+
+    v.push_back(temp);
+
+    int t=1;
+    int now = st;
+    tmp[now]--;
+
+    while(1)
+    {
+
+        min1=t;
+        mx = pr[now];
+        for(i=0; i<n; i++)
+        {
+            if(i!=now && arr[i]<min1 && tmp[i]>0 && arr[i]<=t && pr[i]>mx)
+            {
+                min1=arr[i];
+                mx = pr[i];
+                now=i;
+            }
+        }
+
+        for(i=0; i<n; i++)
+        {
+            if(i!=now && tmp[i]>0 && arr[i]<=t)
+            {
+                wt[i]++;
+            }
+        }
+
+        temp.pro=now;
+        temp.time=t;
+        v.push_back(temp);
+
+        tmp[now]--;
+        t++;
+
+        if(tmp[now]==0)
+        {
+
+            mx = 0;
+            min1=t;
+            flg=0;
+            for(i=0; i<n; i++)
+            {
+                if(arr[i]<=t && tmp[i]>0 && pr[i]>mx && arr[i]<=min1)
+                {
+                    flg=1;
+                    min1 = arr[i];
+                    mx = pr[i];
+                    now=i;
+                }
+            }
+
+            if(flg==0)
+            {
+                min1=99999999;
+                mx=0;
+                for(i=0; i<n; i++)
+                {
+                    if(tmp[i]>0 && arr[i]<min1 && pr[i]>mx)
+                    {
+                        min1=arr[i];
+                        mx=pr[i];
+                        t=arr[i];
+                        now=i;
+                    }
+                }
+
+            }
+
+        }
+
+        int koyta=0;
+
+        for(i=0; i<n; i++)
+        {
+            if(tmp[i]==0)koyta++;
+        }
+        if(koyta==n)break;
+    }
+
+    printf("\t##Results for Priority Scheduling Algorithm##\n");
+
+
+    printf("\t****Individual Waiting time****\n");
+    printf("\t  Process            Waiting Time\n");
+
+    for(i=0; i<n; i++)
+    {
+        printf("\t      p%d                 %d\n", i, wt[i]);
+        vPriority.push_back((double)wt[i]);
+    }
+    printf("\n");
+
+
+
+    double sum = 0.0;
+
+    for(i=0; i<n; i++)
+    {
+        sum+=(double)wt[i];
+    }
+    //printf("****Average waiting time : %.3lf\n", sum/n);
+    cout<<"\n****Average of waiting time : "<<setprecision(3)<<sum/n<<endl;
+    vPriority.push_back(sum/n);
+
+
+    printf("\t\t*****Gantt Chart*****\n\n");
+
+
+int process, startTime, endTime;
+    int cnt=0;
+    for(i=0; i<v.size();){
+            cnt++;
+        process = v[i].pro;
+        startTime = v[i].time;
+        endTime;
+        for(j=i+1; j<v.size(); j++){
+            if(v[j].pro!=process){
+                i=j;
+                endTime=v[j-1].time+1;
+                break;
+            }
+        }
+        if(j>=(v.size()-1)){
+            endTime=v[v.size()-1].time+1;
+            i=v.size();
+        }
+        printf("%d__[p%d]__%d  ", startTime, process, endTime);
+    }
+
+
+     printf("\n");
+
+}
+
+void roundRobin()
+{
+    if(inputTaken==false){
+        printf("\t****No input data detected, Give input first!\n");
+        return;
+    }
+    memset(wt, 0, sizeof wt);
+    vRoundRobin.clear();
+    int i, j, k, flg, min1;
+    struct gt tt;
+    vector<gt>v;
+    for(i=0; i<n; i++){
+        tmp[i]=bur[i];
+    }
+
+    int now;
+
+    for(i=0; i<n; i++){
+        if(arr[i]==0){
+            now=i;
+            break;
+        }
+    }
+
+    int tq2=0;
+
+    for(i=0;isAllDone()==false ;i++){
+
+        if(tq2==tq || tmp[now]==0){
+            flg=0;
+
+            for(j=now+1; j<n; j++){
+                if(arr[j]<=i && tmp[j]>0){
+                    flg=1;
+                    now=j;
+                    break;
+                }
+            }
+
+            if(flg==0){
+                for(j=0; j<now; j++){
+                    if(arr[j]<=i && tmp[j]>0){
+                        flg=1;
+                        now=j;
+                        break;
+                    }
+                }
+            }
+
+            if(flg==0){
+                min1=99999;
+                for(j=0; j<n; j++){
+                    if(arr[j]<min1 && tmp[j]>0){
+                        min1=arr[j];
+                        now=j;
+                    }
+                }
+            }
+            tq2=0;
+        }
+        if(i<arr[now])i=arr[now];
+
+       tt.pro=now;
+       tt.time=i;
+
+         for(j=0; j<n; j++){
+        if(arr[j]<=i && j!=now && tmp[j]>0){
+            wt[j]++;
+        }
+       }
+       tq2++;
+       v.push_back(tt);
+       tmp[now]--;
+    }
+
+    printf("\t****##Results for Round Robin Algorithm##\n");
+
+    double sum=0.0;
+printf("\t***Individual Waiting time***\n");
+
+ printf("\tProcess       waiting time\n");
+ for(i=0; i<n; i++){
+    printf("\t  p%d            %d\n",i,wt[i]);
+    vRoundRobin.push_back((double)wt[i]);
+    sum+=(double)wt[i];
+ }
+ vRoundRobin.push_back(sum/n);
+ //printf("***Average of waiting time = %.3lf s\n", sum/n);
+ cout<<"\n****Average of waiting time : "<<setprecision(3)<<sum/n<<endl;
+
+ printf("\t\t***Gantt Chart***\n");
+
+    int process, startTime, endTime;
+    int cnt=0;
+    for(i=0; i<v.size();){
+            cnt++;
+        process = v[i].pro;
+        startTime = v[i].time;
+        endTime;
+        for(j=i+1; j<v.size(); j++){
+            if(v[j].pro!=process){
+                i=j;
+                endTime=v[j-1].time+1;
+                break;
+            }
+        }
+        if(j>=(v.size()-1)){
+            endTime=v[v.size()-1].time+1;
+            i=v.size();
+        }
+        printf("%d__[p%d]__%d  ", startTime, process, endTime);
+    }
+
+     printf("\n");
+
+
+}
+
+void compare()
+{
+
+    fcfs();
+    sjfPreem();
+    sjfNonPreem();
+    priorityScheduling();
+    roundRobin();
+                                           printf("\t\t\t     ______________________\n");
+    printf("----------------------------| Comparing Algorithms |-------------------------\n");
+    printf("_____________________________________________________________________________\n");
+    printf("Process\t|  FCFS  |  SJF(P)  |  SJF(NP)  |  Priority  |  Round Robin  |\n");
+    printf("-----------------------------------------------------------------------------\n");
+    int i;
+    for(i=0; i<n; i++){
+            printf("  p%d   \t|", i);
+            if(vFcfs[i]<=9)printf("   %.0lf    |", vFcfs[i]);
+            else printf("   %.0lf   |",vFcfs[i]);
+            if(vSjfP[i]<=9)printf("    %.0lf     |", vSjfP[i]);
+            else printf("    %.0lf    |", vSjfP[i]);
+            if(vSjfNP[i]<=9)printf("     %.0lf     |", vSjfNP[i]);
+            else printf("     %.0lf    |", vSjfNP[i]);
+            if(vPriority[i]<=9)printf("     %.0lf      |", vPriority[i]);
+            else printf("     %.0lf     |", vPriority[i]);
+            if(vRoundRobin[i]<=9)printf("       %.0lf      |\n", vRoundRobin[i]);
+            else printf("       %.0lf     |\n", vRoundRobin[i]);
+    //printf("   %d   \t|\t %.0lf  \t|\t   %.0lf   \t|\t   %.0lf   \t|\t   %.0lf    \t|\t     %.0lf     \t|\n", i,vFcfs[i],vSjfP[i],vSjfNP[i],vPriority[i],vRoundRobin[i]);
+    }
+    printf("-----------------------------------------------------------------------------\n");
+    printf("Avg. of\t|");
+    if(vFcfs[i]<=9.0)printf("  %.2lf   |", vFcfs[i]);
+            else printf("  %.2lf  |",vFcfs[i]);
+            if(vSjfP[i]<=9.0)printf("   %.2lf   |", vSjfP[i]);
+            else printf("   %.2lf  |", vSjfP[i]);
+            if(vSjfNP[i]<=9.0)printf("    %.2lf   |", vSjfNP[i]);
+            else printf("   %.2lf   |", vSjfNP[i]);
+            if(vPriority[i]<=9.0)printf("    %.2lf    |", vPriority[i]);
+            else printf("    %.2lf   |", vPriority[i]);
+            if(vRoundRobin[i]<=9.0)printf("      %.2lf    |\n", vRoundRobin[i]);
+            else printf("      %.2lf   |\n", vRoundRobin[i]);
+    printf("Wt. Time|");
+    printf("--------------------------------------------------------------------\n");
+}
+
+
+int main()
+{
+
+    int choice;
+
+    inputTaken=false;
+
+    printf("\t\t****CPU Scheduling Algorithms****\n");
+
+    do
+    {
+
+        printf("\n\tPlease select any one from below: \n");
+        printf("\t1. Take input\n");
+        printf("\t2. Show results for FCFS algorithm\n");
+        printf("\t3. Show results for SJF(Preemptive) algorithm\n");
+        printf("\t4. Show results for SJF(Non-preemptive) algorithm\n");
+        printf("\t5. Show results for Priority Scheduling algorithm\n");
+        printf("\t6. Show results for Round Robin algorithm\n");
+        printf("\t7. Compare Algorithms\n");
+        printf("\t8. Quit\n");
+
+        scanf("%d", &choice);
+
+        switch(choice)
+        {
+        case 1:
+            takeInput();
+            break;
+        case 2:
+            fcfs();
+            break;
+        case 3:
+            sjfPreem();
+            break;
+        case 4:
+            sjfNonPreem();
+            break;
+        case 5:
+            priorityScheduling();
+            break;
+        case 6:
+            roundRobin();
+            break;
+        case 7:
+            compare();
+            break;
+        case 8:
+            printf("\t####Thank You####\n");
+            break;
+
+        default:
+            printf("\t***Invalid choice! Try again!***\n");
+            break;
+        }
+
+    }while(choice!=8);
+
+}
+
+/*4
+0 4 3
+1 10 1
+1 2 2
+2 5 5
+2*/
